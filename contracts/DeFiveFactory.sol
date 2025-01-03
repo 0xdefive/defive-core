@@ -10,22 +10,31 @@ contract DeFiveFactory is IDeFiveFactory {
 
     address public override feeToDevs;
     address public override feeToGbm;
-    address public override feeToSetter;
+    address public override feeToDevsSetter;
+    address public override feeToGbmSetter;
 
     mapping(address => mapping(address => address)) public override getPair;
     address[] public override allPairs;
 
-    modifier onlyFeeToSetter() {
-        require(msg.sender == feeToSetter, "DeFive: FORBIDDEN");
+    modifier onlyFeeToDevsSetter() {
+        require(msg.sender == feeToDevsSetter, "DeFive: FORBIDDEN");
+        _;
+    }
+    modifier onlyFeeToGbmSetter() {
+        require(msg.sender == feeToGbmSetter, "DeFive: FORBIDDEN");
         _;
     }
 
-    constructor(address _feeToSetter, address _feeToDevs, address _feeToGbm) {
+    constructor(address _feeToDevsSetter, address _feeToGbmSetter, address _feeToDevs, address _feeToGbm) {
         require(
-            _feeToSetter != address(0) && _feeToDevs != address(0) && _feeToGbm != address(0),
+            _feeToDevsSetter != address(0) &&
+                _feeToGbmSetter != address(0) &&
+                _feeToDevs != address(0) &&
+                _feeToGbm != address(0),
             "DeFive: ZERO_ADDRESS"
         );
-        feeToSetter = _feeToSetter;
+        feeToDevsSetter = _feeToDevsSetter;
+        feeToGbmSetter = _feeToGbmSetter;
         feeToDevs = _feeToDevs;
         feeToGbm = _feeToGbm;
     }
@@ -47,18 +56,29 @@ contract DeFiveFactory is IDeFiveFactory {
         emit PairCreated(token0, token1, pair, allPairs.length);
     }
 
-    function setFeeTo(address _feeToDevs, address _feeToGbm) external override onlyFeeToSetter {
-        require(_feeToDevs != address(0) && _feeToGbm != address(0), "DeFive: ZERO_ADDRESS");
+    function setFeeToDevs(address _feeToDevs) external override onlyFeeToDevsSetter {
+        require(_feeToDevs != address(0), "DeFive: ZERO_ADDRESS");
         feeToDevs = _feeToDevs;
-        feeToGbm = _feeToGbm;
-
-        emit SetFeeTo(msg.sender, _feeToDevs, _feeToGbm);
+        emit SetFeeToDevs(msg.sender, _feeToDevs);
     }
 
-    function setFeeToSetter(address _feeToSetter) external override onlyFeeToSetter {
-        require(_feeToSetter != address(0), "DeFive: ZERO_ADDRESS");
-        feeToSetter = _feeToSetter;
+    function setFeeToGbm(address _feeToGbm) external override onlyFeeToGbmSetter {
+        require(_feeToGbm != address(0), "DeFive: ZERO_ADDRESS");
+        feeToGbm = _feeToGbm;
+        emit SetFeeToGbm(msg.sender, _feeToGbm);
+    }
 
-        emit SetFeeToSetter(msg.sender, _feeToSetter);
+    function setFeeToDevsSetter(address _feeToDevsSetter) external override onlyFeeToDevsSetter {
+        require(_feeToDevsSetter != address(0), "DeFive: ZERO_ADDRESS");
+        feeToDevsSetter = _feeToDevsSetter;
+
+        emit SetFeeToDevsSetter(msg.sender, _feeToDevsSetter);
+    }
+
+    function setFeeToGbmSetter(address _feeToGbmSetter) external override onlyFeeToGbmSetter {
+        require(_feeToGbmSetter != address(0), "DeFive: ZERO_ADDRESS");
+        feeToGbmSetter = _feeToGbmSetter;
+
+        emit SetFeeToGbmSetter(msg.sender, _feeToGbmSetter);
     }
 }
