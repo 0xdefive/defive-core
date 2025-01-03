@@ -11,7 +11,7 @@ const mnemonic: string = vars.get("MNEMONIC");
 
 const chainIds = {
   hardhat: 31337,
-  mainnet: 250,
+  mainnet: 146,
 };
 
 function getChainConfig(chain: keyof typeof chainIds): NetworkUserConfig {
@@ -22,21 +22,29 @@ function getChainConfig(chain: keyof typeof chainIds): NetworkUserConfig {
       path: "m/44'/60'/0'/0",
     },
     chainId: chainIds[chain],
-    url: "https://rpcapi.fantom.network",
+    url: "https://rpc.soniclabs.com",
   };
 }
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   namedAccounts: {
-    deployer: 0,
-    dev: 1,
-    gbm: 2,
+    deployer: 6,
   },
   etherscan: {
     apiKey: {
-      opera: vars.get("ETHERSCAN_API_KEY", ""),
+      sonic: vars.get("ETHERSCAN_API_KEY", ""),
     },
+    customChains: [
+      {
+        network: "sonic",
+        chainId: 146,
+        urls: {
+          apiURL: "https://api.sonicscan.org/api",
+          browserURL: "https://sonicscan.org",
+        },
+      },
+    ],
   },
   gasReporter: {
     currency: "USD",
